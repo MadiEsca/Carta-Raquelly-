@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Para você</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #fdf6ee;
+      --parchment: #f5e9d5;
+      --rose-deep: #8b1a2f;
+      --rose-mid: #b5324a;
+      --rose-light: #d4748a;
+      --rose-pale: #f2c4ce;
+      --gold: #c09a5b;
+      --gold-light: #e8c97a;
+      --ink: #2a1a1f;
+      --ink-soft: #4a2e36;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: #1a0a10;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'EB Garamond', Georgia, serif;
+      overflow-x: hidden;
+      padding: 2rem 1rem;
+      position: relative;
+    }
+
+    /* ── Background ── */
+    .bg-layer {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, #3d0c1e 0%, transparent 70%),
+        radial-gradient(ellipse 60% 40% at 80% 100%, #2a0612 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 10% 60%, #1f0a14 0%, transparent 60%),
+        #0f0508;
+    }
+
+    .bg-noise {
+      position: fixed; inset: 0; z-index: 1; opacity: .035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ── Petals ── */
+    .petal-canvas { position: fixed; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+
+    .petal {
+      position: absolute; top: -60px;
+      width: 12px; height: 18px;
+      border-radius: 60% 10% 60% 10%;
+      opacity: 0;
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0%   { opacity: 0; transform: translateY(0) rotate(0deg) scale(.8); }
+      5%   { opacity: .7; }
+      90%  { opacity: .4; }
+      100% { opacity: 0; transform: translateY(110vh) rotate(720deg) scale(1.1); }
+    }
+
+    /* ── Card ── */
+    .card-wrap {
+      position: relative; z-index: 10;
+      width: 100%; max-width: 680px;
+    }
+
+    .card {
+      background: var(--cream);
+      border-radius: 2px;
+      padding: 3.5rem 3.2rem 3.2rem;
+      position: relative;
+      box-shadow:
+        0 0 0 1px var(--gold),
+        0 0 0 6px #1a0a1040,
+        0 0 60px #8b1a2f44,
+        0 30px 80px #00000066,
+        inset 0 0 80px #f5e9d510;
+    }
+
+    /* Corner ornaments */
+    .card::before, .card::after,
+    .card-inner::before, .card-inner::after {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: .7;
+    }
+    .card::before  { top: 14px; left: 14px;  border-width: 1.5px 0 0 1.5px; }
+    .card::after   { top: 14px; right: 14px; border-width: 1.5px 1.5px 0 0; }
+    .card-inner::before { bottom: 14px; left: 14px;  border-width: 0 0 1.5px 1.5px; }
+    .card-inner::after  { bottom: 14px; right: 14px; border-width: 0 1.5px 1.5px 0; }
+
+    /* Gold rule */
+    .rule {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+      margin: 1.6rem 0;
+      opacity: .65;
+    }
+
+    /* ── Typography ── */
+    .to-label {
+      font-family: 'EB Garamond', serif;
+      font-size: .78rem;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--rose-mid);
+      opacity: .8;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    .recipient {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3.6rem;
+      color: var(--rose-deep);
+      line-height: 1.1;
+      letter-spacing: .01em;
+      text-shadow: 0 1px 0 #fff6, 0 2px 12px #8b1a2f22;
+    }
+
+    .ornament {
+      display: block;
+      text-align: center;
+      font-size: 1.4rem;
+      color: var(--gold);
+      letter-spacing: .3em;
+      margin: .2rem 0;
+      opacity: .75;
+      user-select: none;
+    }
+
+    .body-text {
+      color: var(--ink-soft);
+      font-size: 1.13rem;
+      line-height: 1.9;
+      font-weight: 400;
+    }
+
+    .body-text p { margin-bottom: 1.1em; }
+    .body-text p:last-child { margin-bottom: 0; }
+
+    .body-text em {
+      font-style: italic;
+      color: var(--rose-mid);
+    }
+
+    .amo {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.22em;
+      color: var(--rose-mid);
+      font-style: normal;
+      letter-spacing: .01em;
+    }
+
+    .paren {
+      font-style: italic;
+      color: var(--rose-light);
+      opacity: .9;
+    }
+
+    .linda {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.22em;
+      color: var(--rose-mid);
+      font-style: normal;
+    }
+
+    .highlight {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.12rem;
+      font-weight: 600;
+      font-style: italic;
+      color: var(--rose-deep);
+      display: block;
+      text-align: center;
+      margin: 1rem 0;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .highlight-script {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.55rem;
+      color: var(--rose-deep);
+      display: block;
+      text-align: center;
+      margin: 1rem 0;
+      letter-spacing: .02em;
+    }
+
+    .sign-off {
+      margin-top: 2rem;
+      text-align: right;
+    }
+
+    .sign-label {
+      font-family: 'EB Garamond', serif;
+      font-size: .78rem;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--rose-mid);
+      opacity: .7;
+    }
+
+    .sender {
+      font-family: 'Great Vibes', cursive;
+      font-size: 2.8rem;
+      color: var(--rose-deep);
+      line-height: 1.2;
+      text-shadow: 0 1px 0 #fff6;
+    }
+
+    /* ── Final phrase ── */
+    .seal-wrap {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .final-phrase {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      font-style: italic;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-align: center;
+      padding: .55rem 1.6rem;
+      border-top: 1px solid;
+      border-bottom: 1px solid;
+      border-color: var(--gold);
+      opacity: .82;
+      text-shadow: 0 0 18px #c09a5b55;
+    }
+
+    /* ── Entrance Animations ── */
+    .card { animation: cardIn .9s cubic-bezier(.22,.8,.36,1) both; }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(30px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp .8s ease forwards;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* stagger delays */
+    .d1 { animation-delay: .3s; }
+    .d2 { animation-delay: .55s; }
+    .d3 { animation-delay: .75s; }
+    .d4 { animation-delay: .95s; }
+    .d5 { animation-delay: 1.2s; }
+    .d6 { animation-delay: 1.4s; }
+    .d7 { animation-delay: 1.6s; }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .card { padding: 2.6rem 1.8rem 2.4rem; }
+      .recipient { font-size: 2.8rem; }
+      .sender { font-size: 2.2rem; }
+      .body-text { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-layer"></div>
+  <div class="bg-noise"></div>
+
+  <!-- Petals -->
+  <div class="petal-canvas" id="petalCanvas"></div>
+
+  <!-- Card -->
+  <main class="card-wrap">
+    <div class="card">
+      <div class="card-inner">
+
+        <!-- Header -->
+        <div class="fade-up d1">
+          <span class="to-label">Com amor para</span>
+          <div class="recipient">Raquelly Luiza</div>
+        </div>
+
+        <div class="rule fade-up d2"></div>
+
+        <span class="ornament fade-up d2">♡ ♡ ♡</span>
+
+        <!-- Body -->
+        <div class="body-text fade-up d3">
+          <p>
+            Raquelly, pra mim você é <span class="linda">linda</span> de todas as formas, de frente, de lado, dando cambalhota, mortal pra trás, de costas, de cima, de baixo, dando pirueta. Você é <span class="linda">linda</span> por dentro e por fora.
+          </p>
+
+          <span class="highlight-script">Eu <span class="amo">amo</span> tudo em você.</span>
+
+          <p>
+            Eu <span class="amo">amo</span> seu sorriso, seu jeitinho de falar, <span class="amo">amo</span> seus olhos, <span class="amo">amo</span> sua maquiagem, <span class="amo">amo</span> seus cremes de cabelo, <span class="amo">amo</span> seu perfume, <span class="amo">amo</span> seu cheiro, <span class="amo">amo</span> seus lacinhos e suas rendas <span class="paren">(é tão legal puxar 😍)</span>, <span class="amo">amo</span> seu cabelo arrumado e quando ele tá um fuá <span class="paren">(raramente, quase nunca)</span>, <span class="amo">amo</span> seu beiço gigante, <span class="amo">amo</span> suas bochechonas, <span class="amo">amo</span> quando você faz as unhas, <span class="amo">amo</span> quando você tira sua unha de fibra e deixa só sua unha natural.
+          </p>
+
+          <p>
+            <span class="amo">Amo</span> te apertar, <span class="amo">amo</span> ficar do seu lado, <span class="amo">amo</span> falar com você, <span class="amo">amo</span> olhar pra você, <span class="amo">amo</span> rir com você, <span class="amo">amo</span> rir de você, <span class="amo">amo</span> te perturbar, <span class="amo">amo</span> te azucrinar, <span class="amo">amo</span> quando você me asunha <span class="paren">(fraquinho 🙄)</span>, <span class="amo">amo</span> quando você fala perto do meu ouvido, <span class="amo">amo</span> quando você deita no meu colo, <span class="amo">amo</span> quando você pega meu celular pra assistir filme e <span class="amo">amo</span> quando a gente fica simplesmente fazendo nada enquanto olhamos o Instagram de alguém.
+          </p>
+
+          <span class="highlight-script"><span class="amo">Amo</span> estar perto de você.</span>
+
+          <p>
+            <span class="amo">Amo</span> quando você pede ajuda, <span class="amo">amo</span> quando você me ajuda, <span class="amo">amo</span> quando você se preocupa comigo, <span class="amo">amo</span> quando você faz os trabalhos comigo, <span class="amo">amo</span> quando te vejo chegando na rodoviária, <span class="amo">amo</span> quando te vejo saindo da rodoviária, <span class="amo">amo</span> quando você me olha com sua cara de brava <span class="paren">(seu charme)</span>, <span class="amo">amo</span> quando me elogia, eu te <span class="amo">amo</span> quando tá feliz, eu te <span class="amo">amo</span> quando tá zangada.
+          </p>
+
+          <p>
+            <span class="amo">Amo</span> a forma como você se preocupa com sua família, <span class="amo">amo</span> como você é meiga, <span class="amo">amo</span> o quanto você é educada, <span class="amo">amo</span> o quanto você é gentil, <span class="amo">amo</span> o quanto você é atenciosa, <span class="amo">amo</span> o quanto você é forte, <span class="amo">amo</span> o quanto você é especial pra todos que te conhecem; eu te <span class="amo">amo</span> muito pela forma que as crianças agem com você, porque todas elas têm um carinho especial por você, mesmo que elas tenham acabado de te conhecer e pela forma que elas agem, eu tenho certeza que você é uma pessoa especial.
+          </p>
+
+          <span class="highlight">EU TE AMO PRINCIPALMENTE POR VOCÊ SER VOCÊ.</span>
+
+          <p style="text-align:center; opacity:.75; font-size:1rem;">
+            Só tem uma coisa que eu não gosto em você, a distância entre as nossas casas. 😔
+          </p>
+        </div>
+
+        <div class="rule fade-up d5"></div>
+
+        <!-- Sign-off -->
+        <div class="sign-off fade-up d6">
+          <span class="sign-label">com carinho,</span><br/>
+          <span class="sender">Marcos Vinícius</span>
+        </div>
+
+        <!-- Final phrase -->
+        <div class="seal-wrap fade-up d7">
+          <div class="final-phrase">
+            EU AMO TUDO EM VOCÊ
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ── Generate petals ──
+    const canvas = document.getElementById('petalCanvas');
+    const colors = [
+      'rgba(180,60,80,.55)',
+      'rgba(212,116,138,.45)',
+      'rgba(242,196,206,.40)',
+      'rgba(139,26,47,.50)',
+      'rgba(192,154,91,.30)',
+    ];
+
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.left       = Math.random() * 100 + 'vw';
+      p.style.width      = (8 + Math.random() * 10) + 'px';
+      p.style.height     = (12 + Math.random() * 14) + 'px';
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDuration  = (8 + Math.random() * 14) + 's';
+      p.style.animationDelay     = (Math.random() * 18) + 's';
+      p.style.borderRadius = Math.random() > .5
+        ? '60% 10% 60% 10%'
+        : '10% 60% 10% 60%';
+      canvas.appendChild(p);
+    }
+  </script>
+</body>
+</html>
